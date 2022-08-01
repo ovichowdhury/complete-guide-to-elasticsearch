@@ -1,0 +1,153 @@
+### Search All Indices
+GET _search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+### Cluster Health check
+GET /_cluster/health
+
+### Create a Index
+PUT /products
+{
+  "settings": {
+    "number_of_shards": 5,
+    "number_of_replicas": 1
+  }
+}
+
+### cat indices
+GET /_cat/indices?v
+
+### Create a document
+POST /products/_doc
+{
+  "name": "Car",
+  "price": 1000000,
+  "in_stock": 20
+}
+
+### Search a document
+GET /products/_doc/arYsOoIB3vkGJKK1P52W
+
+### Update a document
+POST /products/_update/arYsOoIB3vkGJKK1P52W
+{
+  "doc": {
+    "in_stock": 48
+  }
+}
+
+### Update a document and create new fields
+POST /products/_update/arYsOoIB3vkGJKK1P52W
+{
+  "doc": {
+    "tags": ["Moto", "2Wheeler"]
+  }
+}
+
+### Script update a document and increment
+POST /products/_update/arYsOoIB3vkGJKK1P52W
+{
+  "script": {
+    "source": "ctx._source.in_stock++"
+  }
+}
+
+
+### Script update with parameters
+POST /products/_update/arYsOoIB3vkGJKK1P52W
+{
+  "script": {
+    "source": "ctx._source.in_stock -= params.quantity",
+    "params": {
+      "quantity": 10
+    }
+  }
+}
+
+
+### Script update with custom conditions
+POST /products/_update/arYsOoIB3vkGJKK1P52W
+{
+  "script": {
+    "source": """ 
+      if(ctx._source.name == "Car") {
+        ctx._source.price = 5666;
+      }
+      
+    """
+  }
+}
+
+
+### Upsert a document
+POST /products/_update/101
+{
+  "script": {
+    "source": "ctx._source.in_stock++"
+  },
+  "upsert": {
+    "name": "Boat",
+    "price": "100000",
+    "in_stock": 50
+  }
+}
+
+
+### Delete a document
+DELETE /products/_doc/101
+
+
+### Optimistic concurrency control for update using _seq_no & _primary_term
+POST /products/_update/101?if_primary_term=2&if_seq_no=3
+{
+  "doc": {
+    "in_stock": 20
+  }
+}
+
+
+### Update by query for multiple document update
+POST /products/_update_by_query
+{
+  "script": {
+    "source": "ctx._source.price = 3333"
+  }, 
+  "query": {
+    "match_all": {}
+  }
+}
+
+
+### Delete by query for multiple document delete 
+POST /products/_delete_by_query
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+
+### bulk query index and create documents
+POST /_bulk
+{ "index": { "_index": "products", "_id": 200 } }
+{ "name": "Espresso Machine", "price": 199, "in_stock": 5 }
+{ "create": { "_index": "products", "_id": 201 } }
+{ "name": "Milk Frother", "price": 149, "in_stock": 14 }
+
+
+### bulk query update and delete documents
+POST /_bulk
+{ "update": { "_index": "products", "_id": 201 } }
+{ "doc": { "price": 129 } }
+{ "delete": { "_index": "products", "_id": 200 } }
+
+
+### bulk query update and delete specifying index name in request path
+POST /products/_bulk
+{"update": {"_id": 200}}
+{"doc": {"price": 399}}
+{"delete": {"_id": 101}}
