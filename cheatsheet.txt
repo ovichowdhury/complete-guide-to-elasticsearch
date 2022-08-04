@@ -151,3 +151,46 @@ POST /products/_bulk
 {"update": {"_id": 200}}
 {"doc": {"price": 399}}
 {"delete": {"_id": 101}}
+
+
+### explicit index mapping
+PUT /reviews
+{
+  "mappings": {
+    "properties": {
+      "rating": { "type": "float" },
+      "content": { "type": "text" },
+      "product_id": {"type": "integer" },
+      "author": {
+        "properties": {
+          "first_name": { "type": "text" },
+          "last_name": { "type": "text" },
+          "email": { "type": "keyword" }
+        }
+      }
+    }
+  }
+}
+
+
+### Get Index mapping
+GET /reviews/_mapping
+
+### Get mapping of a specific field
+GET /reviews/_mapping/field/author.email
+
+
+### explicit mapping using dot notation
+PUT /reviews_dot_notation
+{
+  "mappings": {
+    "properties": {
+      "rating": { "type": "float" },
+      "content": { "type": "text" },
+      "product_id": {"type": "integer" },
+      "author.first_name": { "type": "text" },
+      "author.last_name": { "type": "text" },
+      "author.email": { "type": "keyword" }
+    }
+  }
+}
