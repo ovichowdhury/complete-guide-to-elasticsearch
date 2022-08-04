@@ -194,3 +194,11 @@ PUT /reviews_dot_notation
     }
   }
 }
+
+### Update a mapping and add a property
+PUT /reviews/_mapping
+{
+  "properties": {
+    "emojis": { "type": "keyword" }
+  }
+}
