@@ -202,3 +202,34 @@ PUT /reviews/_mapping
     "emojis": { "type": "keyword" }
   }
 }
+
+
+### Reindex a index with updated mapping
+POST /_reindex
+{
+  "source": {
+    "index": "reviews"
+  },
+  "dest": {
+    "index": "reviews_new"
+  }
+}
+
+
+### Reindex a index with script
+POST /_reindex
+{
+  "source": {
+    "index": "reviews"
+  },
+  "dest": {
+    "index": "reviews_new"
+  },
+  "script": {
+    "source": """
+      if(ctx._source.product_id !== null){
+        ctx._source.product_id = ctx._source.product_id.toString()
+      }
+    """
+  }
+}
