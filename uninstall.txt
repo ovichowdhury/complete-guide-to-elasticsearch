@@ -1,0 +1,11 @@
+# for ubuntu elasticsearch
+sudo apt-get remove --purge elasticsearch
+
+sudo rm -rf /etc/elasticsearch
+sudo rm -rf /var/lib/elasticsearch
+
+# for ubuntu kibana
+sudo apt-get remove --purge kibana
+
+sudo rm -rf /etc/kibana
+sudo rm -rf /var/lib/kibana
